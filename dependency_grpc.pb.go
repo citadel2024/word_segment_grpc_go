@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DependencyServiceClient interface {
-	ParseDependencies(ctx context.Context, in *TextInput, opts ...grpc.CallOption) (*DependencyList, error)
+	ParseDependencies(ctx context.Context, in *ParseDependenciesRequest, opts ...grpc.CallOption) (*ParseDependenciesResponse, error)
 }
 
 type dependencyServiceClient struct {
@@ -37,9 +37,9 @@ func NewDependencyServiceClient(cc grpc.ClientConnInterface) DependencyServiceCl
 	return &dependencyServiceClient{cc}
 }
 
-func (c *dependencyServiceClient) ParseDependencies(ctx context.Context, in *TextInput, opts ...grpc.CallOption) (*DependencyList, error) {
+func (c *dependencyServiceClient) ParseDependencies(ctx context.Context, in *ParseDependenciesRequest, opts ...grpc.CallOption) (*ParseDependenciesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DependencyList)
+	out := new(ParseDependenciesResponse)
 	err := c.cc.Invoke(ctx, DependencyService_ParseDependencies_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *dependencyServiceClient) ParseDependencies(ctx context.Context, in *Tex
 // All implementations must embed UnimplementedDependencyServiceServer
 // for forward compatibility.
 type DependencyServiceServer interface {
-	ParseDependencies(context.Context, *TextInput) (*DependencyList, error)
+	ParseDependencies(context.Context, *ParseDependenciesRequest) (*ParseDependenciesResponse, error)
 	mustEmbedUnimplementedDependencyServiceServer()
 }
 
@@ -62,7 +62,7 @@ type DependencyServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedDependencyServiceServer struct{}
 
-func (UnimplementedDependencyServiceServer) ParseDependencies(context.Context, *TextInput) (*DependencyList, error) {
+func (UnimplementedDependencyServiceServer) ParseDependencies(context.Context, *ParseDependenciesRequest) (*ParseDependenciesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParseDependencies not implemented")
 }
 func (UnimplementedDependencyServiceServer) mustEmbedUnimplementedDependencyServiceServer() {}
@@ -87,7 +87,7 @@ func RegisterDependencyServiceServer(s grpc.ServiceRegistrar, srv DependencyServ
 }
 
 func _DependencyService_ParseDependencies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TextInput)
+	in := new(ParseDependenciesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func _DependencyService_ParseDependencies_Handler(srv interface{}, ctx context.C
 		FullMethod: DependencyService_ParseDependencies_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DependencyServiceServer).ParseDependencies(ctx, req.(*TextInput))
+		return srv.(DependencyServiceServer).ParseDependencies(ctx, req.(*ParseDependenciesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
